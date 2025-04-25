@@ -80,8 +80,8 @@ class LoanDocProcessor:
 
 # ========== Streamlit App ==========
 
-st.set_page_config(page_title="🏦 2. Problem Statement: Automated Personal Loan Document Processing Background", layout="wide")
-st.markdown("<h1 style='text-align: center;'>🏦 2. Problem Statement: Automated Personal Loan Document Processing Background</h1>", unsafe_allow_html=True)
+st.set_page_config(page_title="🏦 2. Problem Statement: Automated Personal Loan Document Processing ", layout="wide")
+st.markdown("<h1 style='text-align: center;'>🏦 2. Problem Statement: Automated Personal Loan Document Processing </h1>", unsafe_allow_html=True)
 st.caption("An intelligent, OCR-powered system for loan document verification & extraction.")
 
 uploaded_file = st.file_uploader("📂 Upload Loan Application", type=["png", "jpg", "jpeg"])
