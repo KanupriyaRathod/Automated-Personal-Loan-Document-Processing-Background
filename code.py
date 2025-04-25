@@ -10,6 +10,7 @@ from datetime import datetime
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 # ========== Class Definition ==========
+
 class LoanDocProcessor:
     def __init__(self):
         self.field_templates = {
@@ -59,6 +60,7 @@ class LoanDocProcessor:
                         'valid': valid,
                         'confidence': 'high' if '₹' in val or '$' in val else 'medium'
                     })
+                    # Take only the first valid match for each field
                     if valid and results[field]['final_value'] is None:
                         results[field]['final_value'] = val
         return results
@@ -77,6 +79,7 @@ class LoanDocProcessor:
             st.write(f"**{k.replace('_', ' ').title()}**: {v}")
 
 # ========== Streamlit App ==========
+
 st.set_page_config(page_title="🏦 2. Problem Statement: Automated Personal Loan Document Processing Background", layout="wide")
 st.markdown("<h1 style='text-align: center;'>🏦 2. Problem Statement: Automated Personal Loan Document Processing Background</h1>", unsafe_allow_html=True)
 st.caption("An intelligent, OCR-powered system for loan document verification & extraction.")
@@ -97,25 +100,29 @@ if uploaded_file:
     st.subheader("🔍 Field Extraction & Validation")
     user_inputs = {}
     col1, col2 = st.columns(2)
+
+    # Field Inputs Section
     with col1:
         for field, info in extracted.items():
             val = info['final_value'] or ""
             user_val = st.text_input(f"{field.replace('_', ' ').title()} 🧾", value=val)
             user_inputs[field] = user_val
 
+    # Field Validation Summary Section (Updated to show field name only once and avoid duplicate values)
     with col2:
         st.markdown("### 🧠 Field Validation Summary")
         for field, info in extracted.items():
-            for match in info['matches']:
-                color = "green" if match['valid'] else "red"
-                symbol = "✅" if match['valid'] else "❌"
-                st.markdown(f"- **{field.title()}**: `{match['value']}` <span style='color:{color}'>{symbol} ({match['confidence']})</span>", unsafe_allow_html=True)
+            # Display the field name only once
+            st.markdown(f"**{field.replace('_', ' ').title()}**:")
+            
+            # Display only the first valid match
+            if info['final_value']:
+                color = "green" if info['matches'][0]['valid'] else "red"
+                symbol = "✅" if info['matches'][0]['valid'] else "❌"
+                st.markdown(f"- `{info['final_value']}` <span style='color:{color}'>{symbol} ({info['matches'][0]['confidence']})</span>", unsafe_allow_html=True)
 
     if st.button("🚀 Submit to Bank System"):
         processor.send_to_bank_system(user_inputs)
         st.balloons()
         st.download_button("📥 Download Submission Summary", data=processor.download_summary(user_inputs),
                            file_name=f"Loan_Submission_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
-
-
-
