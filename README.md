@@ -1,4 +1,4 @@
-# 🏦 Automated Personal Loan Document Processing Background
+# 🏦 Automated Personal Loan Document Processing
 
 A Streamlit app that automates the extraction and validation of key information from scanned personal loan application documents using OCR.
 
